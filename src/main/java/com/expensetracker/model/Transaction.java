@@ -3,7 +3,6 @@ package com.expensetracker.model;
 import java.time.LocalDate;
 
 public class Transaction {
-
     private int id;
     private int userId;
     private int categoryId;

@@ -64,4 +64,26 @@ public class TransactionDAO {
 
         return transactions;
     }
+
+    public double getTotalByType(int userId, String type) {
+        double total = 0;
+        String sql = "SELECT SUM(amount) AS total FROM transactions WHERE user_id = ? AND type = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, type);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("total");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error calculating total: " + e.getMessage());
+        }
+
+        return total;
+    }
 }

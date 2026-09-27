@@ -22,7 +22,8 @@ public class Main {
             System.out.println("2. View All Categories");
             System.out.println("3. Add Transaction");
             System.out.println("4. View All Transactions (user 1)");
-            System.out.println("5. Exit");
+            System.out.println("5. View Summary (Income/Expense/Balance)");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -86,6 +87,17 @@ public class Main {
                     break;
 
                 case 5:
+                    double totalIncome = transactionDAO.getTotalByType(1, "income");
+                    double totalExpense = transactionDAO.getTotalByType(1, "expense");
+                    double balance = totalIncome - totalExpense;
+
+                    System.out.println("\n--- Summary ---");
+                    System.out.println("Total Income: " + totalIncome);
+                    System.out.println("Total Expense: " + totalExpense);
+                    System.out.println("Balance: " + balance);
+                    break;
+
+                case 6:
                     running = false;
                     System.out.println("Goodbye!");
                     break;
