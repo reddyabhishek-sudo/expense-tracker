@@ -86,4 +86,34 @@ public class TransactionDAO {
 
         return total;
     }
+
+    public List<Transaction> getTransactionsByCategory(int userId, int categoryId) {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "SELECT * FROM transactions WHERE user_id = ? AND category_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, categoryId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Transaction t = new Transaction(
+                        rs.getInt("user_id"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("type"),
+                        rs.getDate("date").toLocalDate(),
+                        rs.getString("note"));
+                t.setId(rs.getInt("id"));
+                transactions.add(t);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching transactions by category: " + e.getMessage());
+        }
+
+        return transactions;
+    }
 }

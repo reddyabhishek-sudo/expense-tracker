@@ -23,7 +23,8 @@ public class Main {
             System.out.println("3. Add Transaction");
             System.out.println("4. View All Transactions (user 1)");
             System.out.println("5. View Summary (Income/Expense/Balance)");
-            System.out.println("6. Exit");
+            System.out.println("6. View Transactions by Category");
+            System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -98,6 +99,19 @@ public class Main {
                     break;
 
                 case 6:
+                    System.out.print("Enter category ID: ");
+                    int filterCategoryId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    List<Transaction> filtered = transactionDAO.getTransactionsByCategory(1, filterCategoryId);
+                    System.out.println("Transactions for category ID " + filterCategoryId + ":");
+                    for (Transaction tx : filtered) {
+                        System.out.println("- " + tx.getAmount() + " | " + tx.getType() + " | " + tx.getDate() + " | "
+                                + tx.getNote());
+                    }
+                    break;
+
+                case 7:
                     running = false;
                     System.out.println("Goodbye!");
                     break;
