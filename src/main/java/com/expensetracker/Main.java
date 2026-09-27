@@ -24,7 +24,8 @@ public class Main {
             System.out.println("4. View All Transactions (user 1)");
             System.out.println("5. View Summary (Income/Expense/Balance)");
             System.out.println("6. View Transactions by Category");
-            System.out.println("7. Exit");
+            System.out.println("7. Delete Transaction");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -82,8 +83,8 @@ public class Main {
                     List<Transaction> transactions = transactionDAO.getTransactionsByUser(1);
                     System.out.println("All transactions:");
                     for (Transaction tx : transactions) {
-                        System.out.println("- " + tx.getAmount() + " | " + tx.getType() + " | " + tx.getDate() + " | "
-                                + tx.getNote());
+                        System.out.println("ID: " + tx.getId() + " | " + tx.getAmount() + " | " + tx.getType() + " | "
+                                + tx.getDate() + " | " + tx.getNote());
                     }
                     break;
 
@@ -112,6 +113,13 @@ public class Main {
                     break;
 
                 case 7:
+                    System.out.print("Enter transaction ID to delete: ");
+                    int deleteId = scanner.nextInt();
+                    scanner.nextLine();
+                    transactionDAO.deleteTransaction(deleteId);
+                    break;
+
+                case 8:
                     running = false;
                     System.out.println("Goodbye!");
                     break;

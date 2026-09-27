@@ -116,4 +116,24 @@ public class TransactionDAO {
 
         return transactions;
     }
+
+    public void deleteTransaction(int transactionId) {
+        String sql = "DELETE FROM transactions WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, transactionId);
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Transaction deleted successfully.");
+            } else {
+                System.out.println("No transaction found with that ID.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting transaction: " + e.getMessage());
+        }
+    }
 }
