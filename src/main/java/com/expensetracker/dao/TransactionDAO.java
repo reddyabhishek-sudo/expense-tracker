@@ -136,4 +136,28 @@ public class TransactionDAO {
             System.out.println("Error deleting transaction: " + e.getMessage());
         }
     }
+
+    public void updateTransaction(int transactionId, double amount, String type, String note) {
+        String sql = "UPDATE transactions SET amount = ?, type = ?, note = ? WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, amount);
+            stmt.setString(2, type);
+            stmt.setString(3, note);
+            stmt.setInt(4, transactionId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Transaction updated successfully.");
+            } else {
+                System.out.println("No transaction found with that ID.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error updating transaction: " + e.getMessage());
+        }
+    }
 }

@@ -25,7 +25,8 @@ public class Main {
             System.out.println("5. View Summary (Income/Expense/Balance)");
             System.out.println("6. View Transactions by Category");
             System.out.println("7. Delete Transaction");
-            System.out.println("8. Exit");
+            System.out.println("8. Update Transaction");
+            System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -120,10 +121,41 @@ public class Main {
                     break;
 
                 case 8:
+                    System.out.print("Enter transaction ID to update: ");
+                    int updateId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    double newAmount;
+                    while (true) {
+                        System.out.print("Enter new amount: ");
+                        newAmount = scanner.nextDouble();
+                        scanner.nextLine();
+                        if (newAmount > 0) {
+                            break;
+                        }
+                        System.out.println("Amount must be greater than 0. Try again.");
+                    }
+
+                    String newType;
+                    while (true) {
+                        System.out.print("Enter new type (income/expense): ");
+                        newType = scanner.nextLine().trim().toLowerCase();
+                        if (newType.equals("income") || newType.equals("expense")) {
+                            break;
+                        }
+                        System.out.println("Invalid type. Please type exactly 'income' or 'expense'.");
+                    }
+
+                    System.out.print("Enter new note: ");
+                    String newNote = scanner.nextLine();
+
+                    transactionDAO.updateTransaction(updateId, newAmount, newType, newNote);
+                    break;
+
+                case 9:
                     running = false;
                     System.out.println("Goodbye!");
                     break;
-
                 default:
                     System.out.println("Invalid choice, try again.");
             }
