@@ -12,20 +12,67 @@ import java.util.Scanner;
 import com.expensetracker.dao.BudgetDAO;
 import com.expensetracker.model.Budget;
 
+import com.expensetracker.dao.UserDAO;
+import com.expensetracker.model.User;
+
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         CategoryDAO categoryDAO = new CategoryDAO();
         TransactionDAO transactionDAO = new TransactionDAO();
         BudgetDAO budgetDAO = new BudgetDAO();
+        UserDAO userDAO = new UserDAO();
         boolean running = true;
+
+        // ---- Login / Register screen ----
+        User currentUser = null;
+        while (currentUser == null) {
+            System.out.println("\n===== Welcome to Expense Tracker =====");
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.print("Enter your choice: ");
+
+            int authChoice = scanner.nextInt();
+            scanner.nextLine();
+
+            if (authChoice == 1) {
+                System.out.print("Username: ");
+                String loginUsername = scanner.nextLine();
+                System.out.print("Password: ");
+                String loginPassword = scanner.nextLine();
+
+                currentUser = userDAO.loginUser(loginUsername, loginPassword);
+                if (currentUser == null) {
+                    System.out.println("Invalid username or password. Try again.");
+                } else {
+                    System.out.println("Welcome back, " + currentUser.getName() + "!");
+                }
+
+            } else if (authChoice == 2) {
+                System.out.print("Your name: ");
+                String regName = scanner.nextLine();
+                System.out.print("Choose a username: ");
+                String regUsername = scanner.nextLine();
+                System.out.print("Choose a password: ");
+                String regPassword = scanner.nextLine();
+
+                User newUser = new User(regName, regUsername, regPassword);
+                if (userDAO.registerUser(newUser)) {
+                    System.out.println("Registration successful! Please login.");
+                }
+
+            } else {
+                System.out.println("Invalid choice, try again.");
+            }
+        }
+        int userId = currentUser.getId();
 
         while (running) {
             System.out.println("\n===== Expense Tracker =====");
             System.out.println("1. Add Category");
             System.out.println("2. View All Categories");
             System.out.println("3. Add Transaction");
-            System.out.println("4. View All Transactions (user 1)");
+            System.out.println("4. View All Transactions");
             System.out.println("5. View Summary (Income/Expense/Balance)");
             System.out.println("6. View Transactions by Category");
             System.out.println("7. Delete Transaction");
@@ -82,13 +129,13 @@ public class Main {
                     System.out.print("Enter note: ");
                     String note = scanner.nextLine();
 
-                    Transaction t = new Transaction(1, categoryId, amount, type, LocalDate.now(), note);
+                    Transaction t = new Transaction(userId, categoryId, amount, type, LocalDate.now(), note);
                     transactionDAO.addTransaction(t);
 
                     break;
 
                 case 4:
-                    List<Transaction> transactions = transactionDAO.getTransactionsByUser(1);
+                    List<Transaction> transactions = transactionDAO.getTransactionsByUser(userId);
                     System.out.println("All transactions:");
                     for (Transaction tx : transactions) {
                         System.out.println("ID: " + tx.getId() + " | " + tx.getAmount() + " | " + tx.getType() + " | "
@@ -97,8 +144,8 @@ public class Main {
                     break;
 
                 case 5:
-                    double totalIncome = transactionDAO.getTotalByType(1, "income");
-                    double totalExpense = transactionDAO.getTotalByType(1, "expense");
+                    double totalIncome = transactionDAO.getTotalByType(userId, "income");
+                    double totalExpense = transactionDAO.getTotalByType(userId, "expense");
                     double balance = totalIncome - totalExpense;
 
                     System.out.println("\n--- Summary ---");
@@ -112,7 +159,7 @@ public class Main {
                     int filterCategoryId = scanner.nextInt();
                     scanner.nextLine();
 
-                    List<Transaction> filtered = transactionDAO.getTransactionsByCategory(1, filterCategoryId);
+                    List<Transaction> filtered = transactionDAO.getTransactionsByCategory(userId, filterCategoryId);
                     System.out.println("Transactions for category ID " + filterCategoryId + ":");
                     for (Transaction tx : filtered) {
                         System.out.println("- " + tx.getAmount() + " | " + tx.getType() + " | " + tx.getDate() + " | "
@@ -174,18 +221,18 @@ public class Main {
                         System.out.println("Budget limit must be greater than 0. Try again.");
                     }
 
-                    budgetDAO.setBudget(1, budgetMonth, limitAmount);
+                    budgetDAO.setBudget(userId, budgetMonth, limitAmount);
                     break;
 
                 case 10:
                     System.out.print("Enter month to check (e.g., September): ");
                     String checkMonth = scanner.nextLine();
 
-                    Budget budget = budgetDAO.getBudget(1, checkMonth);
+                    Budget budget = budgetDAO.getBudget(userId, checkMonth);
                     if (budget == null) {
                         System.out.println("No budget set for " + checkMonth + ".");
                     } else {
-                        double totalExpenseForBudget = transactionDAO.getTotalByType(1, "expense");
+                        double totalExpenseForBudget = transactionDAO.getTotalByType(userId, "expense");
                         System.out.println("Budget for " + checkMonth + ": " + budget.getLimitAmount());
                         System.out.println("Total Expense: " + totalExpenseForBudget);
 
