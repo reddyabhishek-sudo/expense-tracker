@@ -171,7 +171,7 @@ public class Main {
                     System.out.print("Enter transaction ID to delete: ");
                     int deleteId = scanner.nextInt();
                     scanner.nextLine();
-                    transactionDAO.deleteTransaction(deleteId);
+                    transactionDAO.deleteTransaction(deleteId, userId);
                     break;
 
                 case 8:
@@ -203,7 +203,7 @@ public class Main {
                     System.out.print("Enter new note: ");
                     String newNote = scanner.nextLine();
 
-                    transactionDAO.updateTransaction(updateId, newAmount, newType, newNote);
+                    transactionDAO.updateTransaction(updateId, userId, newAmount, newType, newNote);
                     break;
 
                 case 9:

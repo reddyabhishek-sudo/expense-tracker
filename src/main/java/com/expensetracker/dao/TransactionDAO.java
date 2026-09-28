@@ -117,13 +117,14 @@ public class TransactionDAO {
         return transactions;
     }
 
-    public void deleteTransaction(int transactionId) {
-        String sql = "DELETE FROM transactions WHERE id = ?";
+    public void deleteTransaction(int transactionId, int userId) {
+        String sql = "DELETE FROM transactions WHERE id = ? AND user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, transactionId);
+            stmt.setInt(2, userId);
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -137,8 +138,8 @@ public class TransactionDAO {
         }
     }
 
-    public void updateTransaction(int transactionId, double amount, String type, String note) {
-        String sql = "UPDATE transactions SET amount = ?, type = ?, note = ? WHERE id = ?";
+    public void updateTransaction(int transactionId, int userId, double amount, String type, String note) {
+        String sql = "UPDATE transactions SET amount = ?, type = ?, note = ? WHERE id = ? AND user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -147,6 +148,7 @@ public class TransactionDAO {
             stmt.setString(2, type);
             stmt.setString(3, note);
             stmt.setInt(4, transactionId);
+            stmt.setInt(5, userId);
 
             int rowsAffected = stmt.executeUpdate();
 
