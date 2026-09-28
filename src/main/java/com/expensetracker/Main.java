@@ -9,11 +9,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import com.expensetracker.dao.BudgetDAO;
+import com.expensetracker.model.Budget;
+
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         CategoryDAO categoryDAO = new CategoryDAO();
         TransactionDAO transactionDAO = new TransactionDAO();
+        BudgetDAO budgetDAO = new BudgetDAO();
         boolean running = true;
 
         while (running) {
@@ -26,7 +30,9 @@ public class Main {
             System.out.println("6. View Transactions by Category");
             System.out.println("7. Delete Transaction");
             System.out.println("8. Update Transaction");
-            System.out.println("9. Exit");
+            System.out.println("9. Set Monthly Budget");
+            System.out.println("10. Check Budget Status");
+            System.out.println("11. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -78,6 +84,7 @@ public class Main {
 
                     Transaction t = new Transaction(1, categoryId, amount, type, LocalDate.now(), note);
                     transactionDAO.addTransaction(t);
+
                     break;
 
                 case 4:
@@ -153,6 +160,47 @@ public class Main {
                     break;
 
                 case 9:
+                    System.out.print("Enter month (e.g., September): ");
+                    String budgetMonth = scanner.nextLine();
+
+                    double limitAmount;
+                    while (true) {
+                        System.out.print("Enter budget limit: ");
+                        limitAmount = scanner.nextDouble();
+                        scanner.nextLine();
+                        if (limitAmount > 0) {
+                            break;
+                        }
+                        System.out.println("Budget limit must be greater than 0. Try again.");
+                    }
+
+                    budgetDAO.setBudget(1, budgetMonth, limitAmount);
+                    break;
+
+                case 10:
+                    System.out.print("Enter month to check (e.g., September): ");
+                    String checkMonth = scanner.nextLine();
+
+                    Budget budget = budgetDAO.getBudget(1, checkMonth);
+                    if (budget == null) {
+                        System.out.println("No budget set for " + checkMonth + ".");
+                    } else {
+                        double totalExpenseForBudget = transactionDAO.getTotalByType(1, "expense");
+                        System.out.println("Budget for " + checkMonth + ": " + budget.getLimitAmount());
+                        System.out.println("Total Expense: " + totalExpenseForBudget);
+
+                        if (totalExpenseForBudget > budget.getLimitAmount()) {
+                            System.out.println("Warning: You have exceeded your budget by "
+                                    + (totalExpenseForBudget - budget.getLimitAmount()));
+                        } else {
+                            System.out.println(
+                                    "You are within budget. Remaining: "
+                                            + (budget.getLimitAmount() - totalExpenseForBudget));
+                        }
+                    }
+                    break;
+
+                case 11:
                     running = false;
                     System.out.println("Goodbye!");
                     break;
