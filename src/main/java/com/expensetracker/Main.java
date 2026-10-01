@@ -204,6 +204,7 @@ public class Main {
                     String newNote = scanner.nextLine();
 
                     transactionDAO.updateTransaction(updateId, userId, newAmount, newType, newNote);
+
                     break;
 
                 case 9:

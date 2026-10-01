@@ -10,19 +10,31 @@ import java.sql.SQLException;
 
 public class BudgetDAO {
 
-    // Set a budget for a given month (inserts a new one)
+    // Set a budget for a month: updates it if one exists, otherwise inserts a new
+    // one
     public void setBudget(int userId, String month, double limitAmount) {
-        String sql = "INSERT INTO budgets (user_id, month, limit_amount) VALUES (?, ?, ?)";
+        Budget existing = getBudget(userId, month);
+
+        String sql;
+        if (existing == null) {
+            sql = "INSERT INTO budgets (limit_amount, user_id, month) VALUES (?, ?, ?)";
+        } else {
+            sql = "UPDATE budgets SET limit_amount = ? WHERE user_id = ? AND month = ?";
+        }
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, userId);
-            stmt.setString(2, month);
-            stmt.setDouble(3, limitAmount);
-
+            stmt.setDouble(1, limitAmount);
+            stmt.setInt(2, userId);
+            stmt.setString(3, month);
             stmt.executeUpdate();
-            System.out.println("Budget set successfully for " + month);
+
+            if (existing == null) {
+                System.out.println("Budget set successfully for " + month);
+            } else {
+                System.out.println("Budget updated for " + month);
+            }
 
         } catch (SQLException e) {
             System.out.println("Error setting budget: " + e.getMessage());
