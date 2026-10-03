@@ -10,11 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TransactionDAO {
 
     // Add a new transaction to the database
-    public void addTransaction(Transaction transaction) {
+    public boolean addTransaction(Transaction transaction) {
         String sql = "INSERT INTO transactions (user_id, category_id, amount, type, date, note) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -29,9 +31,11 @@ public class TransactionDAO {
 
             stmt.executeUpdate();
             System.out.println("Transaction added successfully.");
+            return true;
 
         } catch (SQLException e) {
             System.out.println("Error adding transaction: " + e.getMessage());
+            return false;
         }
     }
 
@@ -87,6 +91,58 @@ public class TransactionDAO {
         return total;
     }
 
+    // Total amount per category name for one type (e.g. "expense")
+    public Map<String, Double> getTotalsByCategory(int userId, String type) {
+        Map<String, Double> totals = new LinkedHashMap<>();
+        String sql = "SELECT c.name, SUM(t.amount) AS total "
+                + "FROM transactions t JOIN categories c ON t.category_id = c.id "
+                + "WHERE t.user_id = ? AND t.type = ? "
+                + "GROUP BY c.name ORDER BY total DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, type);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                totals.put(rs.getString("name"), rs.getDouble("total"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching category totals: " + e.getMessage());
+        }
+
+        return totals;
+    }
+
+    // Total expenses for one month, e.g. yearMonth = "2026-10"
+    public double getExpenseTotalForMonth(int userId, String yearMonth) {
+        double total = 0;
+        java.time.YearMonth ym = java.time.YearMonth.parse(yearMonth);
+        String sql = "SELECT SUM(amount) AS total FROM transactions "
+                + "WHERE user_id = ? AND type = 'expense' AND date >= ? AND date <= ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setDate(2, java.sql.Date.valueOf(ym.atDay(1)));
+            stmt.setDate(3, java.sql.Date.valueOf(ym.atEndOfMonth()));
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("total");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error calculating monthly total: " + e.getMessage());
+        }
+
+        return total;
+    }
+
     public List<Transaction> getTransactionsByCategory(int userId, int categoryId) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE user_id = ? AND category_id = ?";
@@ -117,7 +173,7 @@ public class TransactionDAO {
         return transactions;
     }
 
-    public void deleteTransaction(int transactionId, int userId) {
+    public boolean deleteTransaction(int transactionId, int userId) {
         String sql = "DELETE FROM transactions WHERE id = ? AND user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -129,16 +185,19 @@ public class TransactionDAO {
 
             if (rowsAffected > 0) {
                 System.out.println("Transaction deleted successfully.");
+                return true;
             } else {
                 System.out.println("No transaction found with that ID.");
+                return false;
             }
 
         } catch (SQLException e) {
             System.out.println("Error deleting transaction: " + e.getMessage());
+            return false;
         }
     }
 
-    public void updateTransaction(int transactionId, int userId, double amount, String type, String note) {
+    public boolean updateTransaction(int transactionId, int userId, double amount, String type, String note) {
         String sql = "UPDATE transactions SET amount = ?, type = ?, note = ? WHERE id = ? AND user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -154,12 +213,15 @@ public class TransactionDAO {
 
             if (rowsAffected > 0) {
                 System.out.println("Transaction updated successfully.");
+                return true;
             } else {
                 System.out.println("No transaction found with that ID.");
+                return false;
             }
 
         } catch (SQLException e) {
             System.out.println("Error updating transaction: " + e.getMessage());
+            return false;
         }
     }
 }

@@ -15,4 +15,13 @@ public class Category {
     public String getName() {
         return name;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return name; // so the dropdown shows the category name
+    }
 }

@@ -39,6 +39,7 @@ public class CategoryDAO {
 
             while (rs.next()) {
                 Category category = new Category(rs.getString("name"));
+                category.setId(rs.getInt("id"));
                 categories.add(category);
             }
 
