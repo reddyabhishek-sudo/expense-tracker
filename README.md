@@ -1,79 +1,73 @@
 # Expense Tracker
 
-A console-based Expense Tracker application built in Java, using JDBC to connect to a MySQL database. Built as a BTech 2nd year end-semester project.
+A desktop expense tracking application built with **Java, JavaFX and MySQL**.
+Users can register, log in, record income and expenses, see where their money
+goes, and track a monthly budget.
+
+## Screenshots
+
+| Login | Dashboard |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Transactions | Summary |
+|---|---|
+| ![Transactions](docs/screenshots/transactions.png) | ![Summary](docs/screenshots/summary.png) |
+
+![Budget](docs/screenshots/budget.png)
 
 ## Features
 
-- User registration and login (each user sees only their own data)
-- Add and view expense categories (Food, Travel, Rent, Shopping, Entertainment, Bills, Health, Education, Subscriptions)
-- Add transactions (income/expense) linked to a category, with input validation
-- View all transactions, including their unique IDs
-- View a financial summary: total income, total expense and balance
-- Filter transactions by category
-- Update and delete transactions (restricted to the logged-in user's own data)
-- Set a monthly budget and check spending against it
-- Data stored in MySQL with foreign key relationships
+- User registration and login, with each user seeing only their own data
+- Add, edit and delete transactions (income or expense) with categories and dates
+- Dashboard with total income, total expense and balance
+- Transactions table with colour-coded income and expense
+- Summary screen with a pie chart of expenses by category
+- Monthly budget with a progress bar (green, orange near the limit, red when exceeded)
+- Dark themed UI styled with a single CSS file
 
 ## Tech Stack
 
-- **Language:** Java
-- **Database:** MySQL
-- **Build Tool:** Maven
-- **Key Concepts:** OOP (classes, encapsulation), JDBC, DAO design pattern, PreparedStatement (prevents SQL injection), SQL aggregate functions (SUM), exception handling, input validation, CRUD operations
+- Java 21
+- JavaFX 21
+- MySQL with JDBC (`mysql-connector-java` 8.0.33)
+- Maven
 
 ## Project Structure
 
 ```
 src/main/java/com/expensetracker/
-├── model/     # User, Category, Transaction, Budget
-├── dao/       # UserDAO, CategoryDAO, TransactionDAO, BudgetDAO
-├── util/      # DBConnection - handles the MySQL connection
-└── Main.java  # Login screen, console menu, program entry point
+├── App.java              JavaFX entry point
+├── Main.java             Original console version
+├── model/                User, Category, Transaction, Budget
+├── dao/                  UserDAO, CategoryDAO, TransactionDAO, BudgetDAO
+├── ui/                   Login, Dashboard, Transactions, Summary, Budget screens
+└── util/                 DBConnection
 
 src/main/resources/
-└── config.properties   # Database credentials (not committed to Git)
+├── styles/theme.css      UI theme
+└── config.properties     DB credentials (not committed)
 ```
-
-## Database Schema
-
-Four tables: `users`, `categories`, `transactions`, `budgets`. Transactions link to users and categories through foreign keys, and budgets link to users.
 
 ## How to Run
 
-1. Clone this repository
-2. Create a MySQL database named `expense_tracker` and its four tables
-3. Create `src/main/resources/config.properties` with your own credentials:
-```
-   db.url=jdbc:mysql://localhost:3306/expense_tracker
-   db.username=your_username
-   db.password=your_password
-```
-4. Run `mvn clean install`
-5. Run `Main.java`
-
-## Sample Menu
+1. Install Java 21 or newer, Maven and MySQL.
+2. Create the `expense_tracker` database with the tables `users`, `categories`,
+   `transactions` and `budgets`, and add some categories.
+3. Create `src/main/resources/config.properties` with your database details
+   (this file is in `.gitignore`).
+4. Start the JavaFX app:
 
 ```
-===== Expense Tracker =====
-1. Add Category
-2. View All Categories
-3. Add Transaction
-4. View All Transactions
-5. View Summary (Income/Expense/Balance)
-6. View Transactions by Category
-7. Delete Transaction
-8. Update Transaction
-9. Set Monthly Budget
-10. Check Budget Status
-11. Exit
+mvn clean javafx:run
 ```
 
-## Known Limitations / Future Improvements
+To run the original console version, run `Main.java` instead.
 
-- Passwords are stored as plain text; a production app would hash them (e.g. BCrypt)
-- Budget checks compare against total expenses, not month-specific expenses
-- Setting a budget twice for the same month creates duplicate rows
+## Known Limitations
 
-## Author
+- Passwords are stored as plain text and should be hashed (for example with BCrypt)
+- The Edit dialog changes type, amount and note, but not date or category
+- A new database connection is opened for every query (no connection pool) 
 
-Abhishek, BTech 2nd Year
+Abhishek Btech 2nd year

@@ -382,3 +382,124 @@
 .edit-button:hover {
     -fx-background-color: rgba(165, 180, 252, 0.15);
 }
+
+/* ---------- Dialogs (Edit + Delete confirm) ---------- */
+.dialog-pane {
+    -fx-background-color: #1e293b;
+    -fx-font-family: "Segoe UI";
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #111827;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .content.label,
+.dialog-pane .label {
+    -fx-text-fill: #cbd5e1;
+}
+
+.dialog-pane .text-field {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #334155;
+    -fx-border-radius: 10;
+    -fx-padding: 10 12 10 12;
+}
+
+.dialog-pane .combo-box {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 10;
+    -fx-border-color: #334155;
+    -fx-border-radius: 10;
+}
+
+.dialog-pane .combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: #334155;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: linear-gradient(to right, #6366f1, #8b5cf6);
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-opacity: 0.85;
+}
+
+/* ---------- Date picker calendar popup ---------- */
+.date-picker-popup {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.date-picker-popup>.month-year-pane {
+    -fx-background-color: #111827;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.date-picker-popup>.month-year-pane .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.date-picker-popup>.month-year-pane .spinner .button .left-arrow,
+.date-picker-popup>.month-year-pane .spinner .button .right-arrow {
+    -fx-background-color: #a5b4fc;
+}
+
+.date-picker-popup>.month-year-pane .spinner .button {
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup .calendar-grid {
+    -fx-background-color: #1e293b;
+}
+
+.date-picker-popup .day-name-cell,
+.date-picker-popup .week-number-cell {
+    -fx-text-fill: #94a3b8;
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #334155;
+}
+
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #6366f1;
+    -fx-text-fill: white;
+}
+
+.date-picker-popup .day-cell:today {
+    -fx-border-color: #6366f1;
+    -fx-border-radius: 8;
+}
+
+.date-picker-popup .day-cell.previous-month,
+.date-picker-popup .day-cell.next-month {
+    -fx-text-fill: #475569;
+}

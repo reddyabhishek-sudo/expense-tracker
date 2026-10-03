@@ -129,6 +129,9 @@ public class TransactionsView {
                 "Delete this ₹ " + String.format("%,.2f", t.getAmount()) + " transaction?",
                 ButtonType.YES, ButtonType.NO);
         alert.setHeaderText("Confirm delete");
+        alert.setGraphic(null);
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/styles/theme.css").toExternalForm());
         alert.showAndWait().ifPresent(answer -> {
             if (answer == ButtonType.YES) {
                 if (transactionDAO.deleteTransaction(t.getId(), Session.getUser().getId())) {
@@ -148,6 +151,8 @@ public class TransactionsView {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Edit Transaction");
         dialog.setHeaderText("Update this transaction");
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/styles/theme.css").toExternalForm());
 
         ComboBox<String> typeBox = new ComboBox<>();
         typeBox.getItems().addAll("income", "expense");
