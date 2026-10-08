@@ -126,16 +126,4 @@ public class DashboardView {
         HBox.setHgrow(card, Priority.ALWAYS);
         return card;
     }
-
-    private Node buildPlaceholder(String name) {
-        Label heading = new Label(name);
-        heading.getStyleClass().add("page-title");
-
-        Label sub = new Label("This screen is coming in the next steps.");
-        sub.getStyleClass().add("page-subtitle");
-
-        VBox page = new VBox(10, heading, sub);
-        page.getStyleClass().add("page");
-        return page;
-    }
 }
